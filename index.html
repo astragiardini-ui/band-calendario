@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prove</title>
+<meta name="description" content="Calendario delle prove: segna i giorni in cui ci sei.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://*.supabase.co; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="theme-color" content="#E4EAE6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161B1A" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preload" href="fonts/bigshoulders-display.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="pagina">
+  <header class="testata">
+    <h1>Prove</h1>
+    <p class="guida">Tocca i giorni in cui ci sei. Un giorno nero vuol dire che ci siete tutti e cinque.</p>
+  </header>
+
+  <div class="corpo">
+    <main>
+      <section class="chi-sez" aria-label="Chi sei">
+        <span class="chi-label" id="chi-label">Tu sei</span>
+        <div class="chi" id="chi" role="radiogroup" aria-labelledby="chi-label"></div>
+      </section>
+
+      <section class="mese-sez" aria-labelledby="mese-titolo">
+        <div class="mese-barra">
+          <h2 id="mese-titolo" aria-live="polite"></h2>
+          <div class="mese-nav">
+            <button type="button" id="prec" class="nav" aria-label="Mese precedente">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button type="button" id="succ" class="nav" aria-label="Mese successivo">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="settimana" aria-hidden="true">
+          <span>L</span><span>M</span><span>M</span><span>G</span><span>V</span><span>S</span><span>D</span>
+        </div>
+        <div id="griglia" class="griglia" role="group" aria-label="Giorni del mese"></div>
+
+        <div class="modo" role="group" aria-label="Come vuoi usare il calendario">
+          <button type="button" data-modo="guarda" aria-pressed="true">Guarda</button>
+          <button type="button" data-modo="segna" aria-pressed="false">Segna i giorni</button>
+        </div>
+
+        <div class="legenda">
+          <p>
+            <span class="voce"><i class="pip s-si neutro"></i>ci sono</span>
+            <span class="voce voce-forse"><i class="pip s-forse neutro"></i>se serve</span>
+            <span class="voce"><i class="pip s-no neutro"></i>non c'è</span>
+            <span class="voce"><i class="pip s-nd neutro"></i>nessuna risposta</span>
+          </p>
+          <p>I pallini di ogni giorno seguono i colori dei nomi in alto, nello stesso ordine. Una cornice vuol dire che nessuno ha detto di no.</p>
+        </div>
+      </section>
+
+      <section class="migliori-sez" aria-labelledby="t-migliori">
+        <h2 id="t-migliori">Giorni migliori</h2>
+        <ol id="migliori" class="migliori"></ol>
+      </section>
+
+      <footer class="piede">
+        <button type="button" id="invito-btn" class="testo">Copia il link d'invito</button>
+        <button type="button" id="info-btn" class="testo">Info e privacy</button>
+        <p id="stato-rete" class="rete" role="status"></p>
+      </footer>
+    </main>
+
+    <aside id="dock" class="dock" data-stato="vuoto" aria-label="Dettaglio"></aside>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<dialog id="dlg-codice" aria-labelledby="dlg-codice-t">
+  <form method="dialog" id="form-codice">
+    <h2 id="dlg-codice-t">Serve il link della band</h2>
+    <p>Apri il link d'invito che ti hanno mandato, oppure incolla qui sotto il codice (o tutto il link).</p>
+    <label for="campo-codice">Codice</label>
+    <input id="campo-codice" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false">
+    <p id="errore-codice" class="errore" role="alert" hidden></p>
+    <div class="azioni-dlg"><button type="submit" class="primario">Entra</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlg-info" aria-labelledby="dlg-info-t">
+  <h2 id="dlg-info-t">Come funziona</h2>
+  <p>Scegli il tuo nome. Poi, per ogni giorno, dici se ci sei, se puoi solo se serve o se non puoi. Gli altri lo vedono subito. Il pulsante «Segna i giorni» serve per riempire il mese in fretta.</p>
+  <h3>Cosa viene salvato</h3>
+  <p>Il nome che scegli tra i cinque e, per ogni giorno, la tua risposta. Sul tuo telefono restano il nome e il codice del link, così non te li chiede ogni volta: è memoria tecnica del browser, senza cookie e senza tracciamenti.</p>
+  <p>I dati stanno su Supabase, in un server a Francoforte (UE). La pagina è ospitata da GitHub Pages, che come ogni sito registra l'indirizzo IP di chi la apre. Niente analytics, niente pubblicità, niente caratteri o script da altri siti.</p>
+  <p>Per far togliere le tue risposte scrivi a Franci.</p>
+  <p class="piccolo">Caratteri: Big Shoulders Display e Atkinson Hyperlegible, licenza SIL OFL, ospitati qui.</p>
+  <div class="azioni-dlg"><button type="button" id="info-chiudi" class="primario">Chiudi</button></div>
+</dialog>
+
+<dialog id="dlg-link" aria-labelledby="dlg-link-t">
+  <h2 id="dlg-link-t">Link d'invito</h2>
+  <p>Non riesco a copiarlo da solo. Selezionalo e copialo da qui.</p>
+  <input id="campo-link" type="text" readonly>
+  <div class="azioni-dlg"><button type="button" id="link-chiudi" class="primario">Chiudi</button></div>
+</dialog>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
