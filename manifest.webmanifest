@@ -1,6 +1,6 @@
 {
-  "name": "Prove Antifragili",
-  "short_name": "Prove",
+  "name": "App Antifragile",
+  "short_name": "Antifragile",
   "description": "Calendario delle prove della band",
   "start_url": "./",
   "scope": "./",
