@@ -82,7 +82,8 @@ button:disabled { cursor: default; }
   font: 800 72px/0.86 var(--titoli);
   letter-spacing: 0.01em;
 }
-.guida { margin: 10px 0 0; max-width: 34ch; color: var(--muto); }
+.testata h1 .riga2 { display: block; }
+.guida { margin: 18px 0 0; max-width: 34ch; color: var(--muto); }
 
 /* Chi sei */
 .chi-sez { margin: 22px 0 18px; }
