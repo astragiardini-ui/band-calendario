@@ -88,6 +88,12 @@ button:disabled { cursor: default; }
 /* Chi sei */
 .chi-sez { margin: 22px 0 18px; }
 .chi-label { display: block; margin-bottom: 8px; font-weight: 700; }
+.chi-label.saluto { margin-bottom: 2px; font: 700 34px/1 var(--titoli); letter-spacing: 0.01em; }
+.chi-nota { margin: 0 0 10px; font-size: 15px; color: var(--muto); }
+
+/* Icone degli stati: riempite col colore della persona */
+.ico { width: 24px; height: 24px; fill: var(--gel, transparent); stroke: currentColor; stroke-width: 1.8;
+  stroke-linecap: round; stroke-linejoin: round; flex: none; }
 .chi { display: flex; flex-wrap: wrap; gap: 8px; }
 .persona-btn {
   display: inline-flex; align-items: center; gap: 8px;
@@ -134,7 +140,8 @@ button:disabled { cursor: default; }
 }
 .giorno.we { background: var(--weekend); }
 .giorno .num { font: 700 22px/1 var(--titoli); }
-.giorno .mio { position: absolute; top: 3px; right: 3px; font-size: 12px; line-height: 1; }
+.giorno .mio { position: absolute; top: 4px; right: 4px; line-height: 0; }
+.giorno .mio .ico { width: 15px; height: 15px; stroke-width: 2; }
 .giorno.oggi .num { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 3px; }
 .giorno.passato { opacity: 0.4; }
 .giorno.fattibile { box-shadow: inset 0 0 0 2px var(--inchiostro); border-color: var(--inchiostro); }
@@ -211,6 +218,7 @@ button:disabled { cursor: default; }
 .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 8px; border: 1px solid var(--linea); border-radius: 999px; font-size: 15px; }
 .chip.st-nd { color: var(--muto); }
 .chip .pallino { width: 10px; height: 10px; }
+.chip .ico { width: 17px; height: 17px; stroke-width: 2; }
 .chip.st-nd .pallino { opacity: 0.4; }
 .azioni { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .azioni.due { grid-template-columns: repeat(2, 1fr); }
@@ -220,7 +228,8 @@ button:disabled { cursor: default; }
   background: var(--parete); border: 2px solid var(--linea); border-radius: 10px;
   font-size: 15px; font-weight: 700;
 }
-.azione .emoji { font-size: 24px; line-height: 1; }
+.azione .ico { width: 28px; height: 28px; }
+.azione[aria-pressed="true"] .ico { stroke: var(--parete); }
 .azione[aria-pressed="true"] { background: var(--inchiostro); color: var(--parete); border-color: var(--inchiostro); }
 .dock-nota { margin: 10px 0 0; font-size: 15px; color: var(--muto); }
 .dock-chi { display: flex; flex-wrap: wrap; gap: 8px; }

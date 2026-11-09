@@ -11,10 +11,18 @@
   const MESI_AVANTI = 12;
 
   const STATI = {
-    si:    { icona: '👍', btn: 'Ci sono',   frase: "c'è" },
-    forse: { icona: '✋', btn: 'Se serve',  frase: "c'è se serve" },
-    no:    { icona: '👎', btn: 'Non posso', frase: "non c'è" },
+    si:    { btn: 'Ci sono',   frase: "c'è" },
+    forse: { btn: 'Se serve',  frase: "c'è se serve" },
+    no:    { btn: 'Non posso', frase: "non c'è" },
   };
+  // Icone: Lucide (licenza ISC). Riempite col colore della persona, contorno nel colore del testo.
+  const TRACCE = {
+    si: '<path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/>',
+    forse: '<path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>',
+    no: '<path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/>',
+  };
+  const icona = (s) => `<svg class="ico ico-${s}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${TRACCE[s]}</svg>`;
+  const indice = (p) => PERSONE.indexOf(p);
   const STATI_USATI = FORSE ? ['si', 'forse', 'no'] : ['si', 'no'];
 
   // ---------- utilità ----------
@@ -151,6 +159,11 @@
 
   // ---------- disegno ----------
   function renderChi() {
+    const label = $('chi-label');
+    label.textContent = S.io ? `Ciao ${S.io}` : 'Chi sei?';
+    label.classList.toggle('saluto', !!S.io);
+    label.dataset.p = S.io ? String(indice(S.io)) : '';
+    if ($('chi-nota')) $('chi-nota').hidden = !S.io;   // pagina vecchia in cache: non rompere
     $('chi').innerHTML = PERSONE.map((p, i) => `
       <button type="button" class="persona-btn" role="radio" aria-checked="${S.io === p}" data-persona="${p}" data-p="${i}">
         <span class="pallino" data-p="${i}"></span>${p}
@@ -203,7 +216,7 @@
       const mio = S.io ? risposta(g, S.io) : null;
       html += `<button type="button" class="${cl.join(' ')}" data-g="${g}" ${passato ? 'disabled' : ''}
         aria-label="${etichettaGiorno(g)}">
-        <span class="num">${n}</span>${mio ? `<span class="mio" aria-hidden="true">${STATI[mio].icona}</span>` : ''}
+        <span class="num">${n}</span>${mio ? `<span class="mio" data-p="${indice(S.io)}" aria-hidden="true">${icona(mio)}</span>` : ''}
         <span class="pips" aria-hidden="true">${pipsHtml(g)}</span></button>`;
     }
     $('griglia').innerHTML = html;
@@ -242,8 +255,8 @@
     return PERSONE.map((p, i) => {
       const s = risposta(g, p);
       const testo = s ? STATI[s].frase : 'non ha risposto';
-      return `<li class="chip st-${s || 'nd'}"><span class="pallino" data-p="${i}"></span>${p}
-        <span aria-hidden="true">${s ? STATI[s].icona : ''}</span><span class="visually-hidden">: ${testo}</span></li>`;
+      return `<li class="chip st-${s || 'nd'}" data-p="${i}"><span class="pallino" data-p="${i}"></span>${p}
+        ${s ? icona(s) : ''}<span class="visually-hidden">: ${testo}</span></li>`;
     }).join('');
   }
 
@@ -264,9 +277,9 @@
   }
 
   function bottoniStato(attivo, azione) {
-    return `<div class="azioni ${FORSE ? '' : 'due'}">${STATI_USATI.map((s) => `
+    return `<div class="azioni ${FORSE ? '' : 'due'}" data-p="${indice(S.io)}">${STATI_USATI.map((s) => `
       <button type="button" class="azione" data-k="${azione}:${s}" data-azione="${azione}" data-stato="${s}" aria-pressed="${attivo === s}">
-        <span class="emoji" aria-hidden="true">${STATI[s].icona}</span>${STATI[s].btn}</button>`).join('')}</div>`;
+        ${icona(s)}${STATI[s].btn}</button>`).join('')}</div>`;
   }
 
   function renderDock() {

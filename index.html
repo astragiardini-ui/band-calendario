@@ -14,7 +14,7 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preload" href="fonts/bigshoulders-display.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="app.css?v=bd7cb880fa">
 </head>
 <body>
 <div class="pagina">
@@ -26,8 +26,9 @@
   <div class="corpo">
     <main>
       <section class="chi-sez" aria-label="Chi sei">
-        <span class="chi-label" id="chi-label">Tu sei</span>
-        <div class="chi" id="chi" role="radiogroup" aria-labelledby="chi-label"></div>
+        <span class="chi-label" id="chi-label">Chi sei?</span>
+        <p class="chi-nota" id="chi-nota" hidden>Non sei tu? Tocca il tuo nome.</p>
+        <div class="chi" id="chi" role="radiogroup" aria-label="Chi sei"></div>
       </section>
 
       <section class="mese-sez" aria-labelledby="mese-titolo">
@@ -100,7 +101,7 @@
   <p>Il nome che scegli tra i cinque e, per ogni giorno, la tua risposta. Sul tuo telefono restano il nome e il codice del link, così non te li chiede ogni volta: è memoria tecnica del browser, senza cookie e senza tracciamenti.</p>
   <p>I dati stanno su Supabase, in un server a Francoforte (UE). La pagina è ospitata da GitHub Pages, che come ogni sito registra l'indirizzo IP di chi la apre. Niente analytics, niente pubblicità, niente caratteri o script da altri siti.</p>
   <p>Per far togliere le tue risposte scrivi a Franci.</p>
-  <p class="piccolo">Caratteri: Big Shoulders Display e Atkinson Hyperlegible, licenza SIL OFL, ospitati qui.</p>
+  <p class="piccolo">Caratteri: Big Shoulders Display e Atkinson Hyperlegible, licenza SIL OFL, ospitati qui. Icone: Lucide, licenza ISC.</p>
   <div class="azioni-dlg"><button type="button" id="info-chiudi" class="primario">Chiudi</button></div>
 </dialog>
 
@@ -111,7 +112,7 @@
   <div class="azioni-dlg"><button type="button" id="link-chiudi" class="primario">Chiudi</button></div>
 </dialog>
 
-<script src="config.js"></script>
-<script src="app.js"></script>
+<script src="config.js?v=bd7cb880fa"></script>
+<script src="app.js?v=bd7cb880fa"></script>
 </body>
 </html>
