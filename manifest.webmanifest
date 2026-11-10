@@ -1,8 +1,8 @@
 {
   "name": "App Antifragile",
   "short_name": "Antifragile",
-  "description": "Calendario delle prove della band",
-  "start_url": "./",
+  "description": "Calendario delle prove e archivio dei brani della band",
+  "id": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#E4EAE6",

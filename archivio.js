@@ -152,6 +152,10 @@
     return (m ? m[1] : String(t || '')).replace(/[^A-Za-z0-9]/g, '').toUpperCase();
   };
 
+  // Il codice resta nel link della pagina (#c=…, la parte dopo # non arriva mai al server): così «Aggiungi alla
+  // schermata Home» se lo porta dentro l'icona, e l'icona si apre sempre già collegata (il manifest non ha start_url).
+  const linkConCodice = (c) => history.replaceState(null, '', location.pathname + location.search + (c ? '#c=' + c : ''));
+
   // ---------------- Stato ----------------
   let S = null;            // { brano, modello, versioni, appunti, personali, versione }
   let brano = null;        // { id, titolo, autore, info }
@@ -1534,6 +1538,7 @@
   function chiediCodice(errore) {
     codice = null;
     mem.raw('prove.codice', null);
+    linkConCodice(null);
     $('err-codice').hidden = !errore;
     if (errore) $('err-codice').textContent = errore;
     if (!$('dlg-codice').open) $('dlg-codice').showModal();
@@ -1542,7 +1547,7 @@
   // ---- dall'icona sulla schermata Home dell'iPhone il link del gruppo non arriva: si incolla una volta ----
   const dallaHome = () => window.navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
   if ($('spiega-codice') && dallaHome()) {
-    $('spiega-codice').textContent = "Hai aperto l'app dall'icona: qui il link del gruppo non arriva da solo. Copia il link della band dal gruppo WhatsApp e tocca «Incolla il link». Basta una volta, poi lo ricorda.";
+    $('spiega-codice').textContent = "Questa icona non ha il codice della band. Copia il link dal gruppo WhatsApp e tocca «Incolla il link». Per un'icona che lo ricorda sempre: apri il link in Safari, tocca Condividi e «Aggiungi alla schermata Home».";
   }
   if ($('incolla-codice')) $('incolla-codice').addEventListener('click', async () => {
     try {
@@ -1563,6 +1568,7 @@
     try {
       await entra();
       mem.raw('prove.codice', c);
+      linkConCodice(c);
       $('dlg-codice').close();
       if (!io) chiediChi();
     } catch (err) {
@@ -1604,8 +1610,9 @@
     if (!io) chiediChi();
   } else {
     const dalLink = normalizzaCodice(location.hash);
-    if (dalLink) { mem.raw('prove.codice', dalLink); history.replaceState(null, '', location.pathname + location.search); }
+    if (dalLink) mem.raw('prove.codice', dalLink);
     codice = normalizzaCodice(mem.raw('prove.codice')) || null;
+    if (codice) linkConCodice(codice);   // resta nella barra: serve all'icona sulla Home
     if (!codice) chiediCodice();
     else entra().catch((e) => {
       if (e.message === 'codice_errato') chiediCodice('Il codice salvato non vale più: incollalo dal link della band.');
