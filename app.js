@@ -438,6 +438,23 @@
     }
   });
 
+
+  // ---- dall'icona sulla schermata Home dell'iPhone il link del gruppo non arriva: si incolla una volta ----
+  const dallaHome = () => window.navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
+  if ($('spiega-codice') && dallaHome()) {
+    $('spiega-codice').textContent = "Hai aperto l'app dall'icona: qui il link del gruppo non arriva da solo. Copia il link della band dal gruppo WhatsApp e tocca «Incolla il link». Basta una volta, poi lo ricorda.";
+  }
+  if ($('incolla-codice')) $('incolla-codice').addEventListener('click', async () => {
+    try {
+      const t = await navigator.clipboard.readText();
+      if (!t || !t.trim()) throw new Error('vuoto');
+      $('campo-codice').value = t.trim();
+      $('form-codice').requestSubmit();
+    } catch (e) {
+      $('campo-codice').focus();
+      avviso("Non riesco a leggere quello che hai copiato: tieni premuto nel campo qui sotto e scegli «Incolla».");
+    }
+  });
   $('form-codice').addEventListener('submit', async (e) => {
     e.preventDefault();
     const codice = normalizzaCodice($('campo-codice').value);

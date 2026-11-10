@@ -24,7 +24,7 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preload" href="fonts/bigshoulders-display.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="app.css?v=5977df4ddf">
+<link rel="stylesheet" href="app.css?v=448b89bce7">
 </head>
 <body>
 <div class="pagina">
@@ -107,8 +107,9 @@
 <dialog id="dlg-codice" aria-labelledby="dlg-codice-t">
   <form method="dialog" id="form-codice">
     <h2 id="dlg-codice-t">Serve il link della band</h2>
-    <p>Apri il link d'invito che ti hanno mandato, oppure incolla qui sotto il codice (o tutto il link).</p>
-    <label for="campo-codice">Codice</label>
+    <p id="spiega-codice">Apri il link d'invito che ti hanno mandato, oppure incolla qui sotto il codice (o tutto il link).</p>
+    <button type="button" id="incolla-codice" class="primario incolla">Incolla il link</button>
+    <label for="campo-codice">oppure scrivi il codice</label>
     <input id="campo-codice" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false">
     <p id="errore-codice" class="errore" role="alert" hidden></p>
     <div class="azioni-dlg"><button type="submit" class="primario">Entra</button></div>
@@ -133,7 +134,7 @@
   <div class="azioni-dlg"><button type="button" id="link-chiudi" class="primario">Chiudi</button></div>
 </dialog>
 
-<script src="config.js?v=5977df4ddf"></script>
-<script src="app.js?v=5977df4ddf"></script>
+<script src="config.js?v=448b89bce7"></script>
+<script src="app.js?v=448b89bce7"></script>
 </body>
 </html>

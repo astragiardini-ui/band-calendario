@@ -300,3 +300,5 @@ dialog input {
   .io-nome .ciao { display: none; }
   .cambia-io { min-height: 32px; padding: 0 10px; font-size: 14px; }
 }
+
+.incolla { width: 100%; min-height: 50px; margin: 6px 0 4px; font-size: 18px; }

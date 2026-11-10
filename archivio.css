@@ -331,3 +331,5 @@ a.reg:hover { border-color: var(--inchiostro); }
   .io-nome .ciao { display: none; }
   .io-box .btn.piccolo { min-height: 32px; }
 }
+
+.incolla { width: 100%; min-height: 50px; margin: 6px 0 4px; font-size: 18px; }
