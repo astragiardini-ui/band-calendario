@@ -24,14 +24,20 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preload" href="fonts/bigshoulders-display.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="app.css?v=baae64b156">
+<link rel="stylesheet" href="app.css?v=5977df4ddf">
 </head>
 <body>
 <div class="pagina">
-  <nav class="sezioni" aria-label="Sezioni dell'app">
-    <a href="./" aria-current="page">Calendario</a>
-    <a href="archivio.html">Archivio</a>
-  </nav>
+  <div class="sopra">
+    <nav class="sezioni" aria-label="Sezioni dell'app">
+      <a href="./" aria-current="page">Calendario</a>
+      <a href="archivio.html">Archivio</a>
+    </nav>
+    <div class="io-box">
+      <span id="io-nome" class="io-nome"></span>
+      <button type="button" id="cambia-io" class="cambia-io">Cambia</button>
+    </div>
+  </div>
   <header class="testata">
     <h1>Prove <span class="riga2">Antifragili</span></h1>
     <p class="guida">Tocca i giorni in cui ci sei. Un giorno nero vuol dire che ci siete tutti e cinque.</p>
@@ -39,11 +45,6 @@
 
   <div class="corpo">
     <main>
-      <section class="chi-sez" aria-label="Chi sei">
-        <span class="chi-label" id="chi-label">Chi sei?</span>
-        <p class="chi-nota" id="chi-nota" hidden>Non sei tu? Tocca il tuo nome.</p>
-        <div class="chi" id="chi" role="radiogroup" aria-label="Chi sei"></div>
-      </section>
 
       <section class="mese-sez" aria-labelledby="mese-titolo">
         <div class="mese-barra">
@@ -97,6 +98,12 @@
 
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
+<dialog id="dlg-chi" class="dlg-chi" aria-labelledby="chi-label">
+  <h2 id="chi-label">Ciao, chi sei?</h2>
+  <p class="piccolo">Si sceglie una volta: lo ricordo su questo telefono. Se sbagli, tocca «Cambia» in alto a destra.</p>
+  <div class="chi" id="chi" role="radiogroup" aria-labelledby="chi-label"></div>
+</dialog>
+
 <dialog id="dlg-codice" aria-labelledby="dlg-codice-t">
   <form method="dialog" id="form-codice">
     <h2 id="dlg-codice-t">Serve il link della band</h2>
@@ -126,7 +133,7 @@
   <div class="azioni-dlg"><button type="button" id="link-chiudi" class="primario">Chiudi</button></div>
 </dialog>
 
-<script src="config.js?v=baae64b156"></script>
-<script src="app.js?v=baae64b156"></script>
+<script src="config.js?v=5977df4ddf"></script>
+<script src="app.js?v=5977df4ddf"></script>
 </body>
 </html>

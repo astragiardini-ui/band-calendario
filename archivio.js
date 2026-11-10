@@ -335,7 +335,7 @@
     $('chi').innerHTML = PERSONE.map((p, i) => `
       <button type="button" class="persona-btn" role="radio" data-p="${i}" aria-checked="${p === io}">
         <span class="pallino"></span>${esc(p)}</button>`).join('');
-    $('io-nome').innerHTML = io ? `<span class="pallino" data-p="${PERSONE.indexOf(io)}"></span>Ciao ${esc(io)}` : 'Chi sei?';
+    $('io-nome').innerHTML = io ? `<span class="pallino" data-p="${PERSONE.indexOf(io)}"></span><span class="ciao">Ciao </span>${esc(io)}` : 'Chi sei?';
     $('cambia-io').textContent = io ? 'Cambia' : 'Scegli';
   }
   function chiediChi() {

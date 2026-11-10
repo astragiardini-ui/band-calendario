@@ -158,12 +158,12 @@
   }
 
   // ---------- disegno ----------
+  // «Ciao, chi sei?» si chiede una volta, all'inizio; poi in alto a destra resta solo il nome con «Cambia».
   function renderChi() {
-    const label = $('chi-label');
-    label.textContent = S.io ? `Ciao ${S.io}` : 'Chi sei?';
-    label.classList.toggle('saluto', !!S.io);
-    label.dataset.p = S.io ? String(indice(S.io)) : '';
-    if ($('chi-nota')) $('chi-nota').hidden = !S.io;   // pagina vecchia in cache: non rompere
+    if ($('io-nome')) {
+      $('io-nome').innerHTML = S.io ? `<span class="pallino" data-p="${indice(S.io)}"></span><span class="ciao">Ciao </span>${S.io}` : 'Chi sei?';
+      $('cambia-io').textContent = S.io ? 'Cambia' : 'Scegli';
+    }
     $('chi').innerHTML = PERSONE.map((p, i) => `
       <button type="button" class="persona-btn" role="radio" aria-checked="${S.io === p}" data-persona="${p}" data-p="${i}">
         <span class="pallino" data-p="${i}"></span>${p}
@@ -357,7 +357,7 @@
   // ---------- eventi ----------
   function onGiorno(g) {
     if (S.modo === 'segna') {
-      if (!S.io) { avviso('Scegli prima il tuo nome.'); return; }
+      if (!S.io) { chiediChi(); return; }
       imposta(g, risposta(g, S.io) === S.pennello ? null : S.pennello);
       return;
     }
@@ -370,11 +370,17 @@
     if (b && !b.disabled) onGiorno(b.dataset.g);
   });
 
+  function chiediChi() {
+    const d = $('dlg-chi');
+    if (d && !d.open && !$('dlg-codice').open) { renderChi(); d.showModal(); }
+  }
+  if ($('cambia-io')) $('cambia-io').addEventListener('click', chiediChi);
   $('chi').addEventListener('click', (e) => {
     const b = e.target.closest('[data-persona]');
     if (!b) return;
     S.io = b.dataset.persona;
     memoria('prove.io', S.io);
+    if ($('dlg-chi') && $('dlg-chi').open) $('dlg-chi').close();
     render();
   });
 
@@ -449,6 +455,7 @@
     $('campo-codice').value = '';
     $('dlg-codice').close();
     sincronizza();
+    if (!S.io) chiediChi();
   });
   $('dlg-codice').addEventListener('cancel', (e) => { if (!S.codice) e.preventDefault(); });
 
@@ -466,5 +473,5 @@
     S.codice = normalizzaCodice(memoria('prove.codice')) || null;
   }
   render();
-  if (S.codice) sincronizza(); else chiediCodice();
+  if (S.codice) { sincronizza(); if (!S.io) chiediChi(); } else chiediCodice();
 })();
