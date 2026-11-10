@@ -20,7 +20,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="stylesheet" href="archivio.css?v=02ff60bdb2">
+<link rel="stylesheet" href="archivio.css?v=baae64b156">
 </head>
 <body>
 <header class="barra">
@@ -28,12 +28,11 @@
     <a href="./">Calendario</a>
     <a href="archivio.html" aria-current="page">Archivio</a>
   </nav>
-  <div class="chi-box">
-    <span class="chi-label" id="chi-label">Chi sei?</span>
-    <div class="chi" id="chi" role="radiogroup" aria-labelledby="chi-label"></div>
+  <div class="io-box">
+    <span id="io-nome" class="io-nome"></span>
+    <button type="button" id="cambia-io" class="btn piccolo">Cambia</button>
   </div>
 </header>
-<p id="avviso-chi" class="avviso-chi" hidden>Scegli il tuo nome qui sopra: così appunti e modifiche portano il tuo nome.</p>
 
 <div class="app">
   <aside class="elenco" aria-label="Brani">
@@ -166,6 +165,12 @@
   </div>
 </dialog>
 
+<dialog id="dlg-chi" class="dialogo dialogo-piccolo dialogo-chi" aria-labelledby="chi-label">
+  <h2 id="chi-label">Ciao, chi sei?</h2>
+  <p class="muto">Si sceglie una volta: lo ricordo su questo telefono. Appunti e modifiche porteranno il tuo nome.</p>
+  <div class="chi" id="chi" role="radiogroup" aria-labelledby="chi-label"></div>
+</dialog>
+
 <dialog id="dlg-codice" class="dialogo dialogo-piccolo" aria-labelledby="dlg-codice-t">
   <form id="form-codice">
     <h2 id="dlg-codice-t">Serve il link della band</h2>
@@ -177,7 +182,7 @@
   </form>
 </dialog>
 
-<script src="config.js?v=02ff60bdb2"></script>
-<script src="archivio.js?v=02ff60bdb2"></script>
+<script src="config.js?v=baae64b156"></script>
+<script src="archivio.js?v=baae64b156"></script>
 </body>
 </html>

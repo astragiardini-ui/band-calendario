@@ -330,20 +330,26 @@
   }
 
   // ---------------- Chi sei ----------------
+  // «Ciao, chi sei?» si chiede una volta, all'inizio; poi in alto resta solo il nome con «Cambia».
   function rendiChi() {
     $('chi').innerHTML = PERSONE.map((p, i) => `
       <button type="button" class="persona-btn" role="radio" data-p="${i}" aria-checked="${p === io}">
         <span class="pallino"></span>${esc(p)}</button>`).join('');
-    $('chi-label').textContent = io ? 'Ciao ' + io : 'Chi sei?';
-    $('avviso-chi').hidden = !!io;
+    $('io-nome').innerHTML = io ? `<span class="pallino" data-p="${PERSONE.indexOf(io)}"></span>Ciao ${esc(io)}` : 'Chi sei?';
+    $('cambia-io').textContent = io ? 'Cambia' : 'Scegli';
   }
+  function chiediChi() {
+    rendiChi();
+    if (!$('dlg-chi').open && !$('dlg-codice').open) $('dlg-chi').showModal();
+  }
+  $('cambia-io').addEventListener('click', chiediChi);
   $('chi').addEventListener('click', (e) => {
     const b = e.target.closest('.persona-btn');
     if (!b) return;
     io = PERSONE[+b.dataset.p];
     mem.raw('prove.io', io);
-    $('chi-label').classList.remove('attenzione');
     rendiChi();
+    if ($('dlg-chi').open) $('dlg-chi').close();
     rendiModoAcc();
     if (S) rendiFoglio();
   });
@@ -1088,11 +1094,6 @@
     mem.set('archivio.vista', vista);
     rendiFoglio();
   });
-  function chiediChi() {
-    $('chi-label').classList.add('attenzione');
-    toast('Prima scegli chi sei, in alto');
-    $('chi').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-  }
 
   // ---------------- Vista: nomi degli accordi, tonalità, grandezza ----------------
   function rendiVista() {
@@ -1467,6 +1468,7 @@
     passato.length = 0; futuro.length = 0;
     mostraBrano();
     $('stato-rete').textContent = '';
+    if (!io) chiediChi();
     try { const s = await Api.stato(brano.id); firmaAppunti = s.appunti; firmaPersonali = s.personali; } catch (e) { /* al prossimo giro */ }
   }
   function mostraBrano() {
@@ -1545,6 +1547,7 @@
       await entra();
       mem.raw('prove.codice', c);
       $('dlg-codice').close();
+      if (!io) chiediChi();
     } catch (err) {
       chiediCodice(err.message === 'codice_errato' ? 'Questo codice non è giusto: copialo dal link della band.' : 'Non riesco a collegarmi: controlla la rete.');
     }
@@ -1581,6 +1584,7 @@
     }
     if (!S.personali) S.personali = {};
     mostraBrano();
+    if (!io) chiediChi();
   } else {
     const dalLink = normalizzaCodice(location.hash);
     if (dalLink) { mem.raw('prove.codice', dalLink); history.replaceState(null, '', location.pathname + location.search); }

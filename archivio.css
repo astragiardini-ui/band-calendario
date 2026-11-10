@@ -314,3 +314,11 @@ a.reg:hover { border-color: var(--inchiostro); }
   .riga:not(.scelta) .acc-riga:hover { background: none; }
   .testo-riga[contenteditable="false"], .sez-nome[contenteditable="false"] { -webkit-user-select: none; user-select: none; }
 }
+
+/* Chi sei: si chiede una volta all'inizio, poi solo il nome in alto */
+.io-box { display: flex; align-items: center; gap: 10px; }
+.io-nome { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; white-space: nowrap; }
+.dialogo-chi .chi { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.dialogo-chi .persona-btn { min-height: 54px; font-size: 18px; justify-content: flex-start; padding: 0 16px; }
+.dialogo-chi .pallino { width: 16px; height: 16px; }
+@media (max-width: 760px) { .io-box { width: auto; } .barra { flex-wrap: nowrap; justify-content: space-between; } }
