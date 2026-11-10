@@ -304,3 +304,13 @@ a.reg:hover { border-color: var(--inchiostro); }
 }
 /* iPhone: il tocco su un'area non cliccabile arriva solo se il puntatore è «pointer» */
 @media (pointer: coarse) { .acc-riga, .acc, .maniglia, .sez-salta { cursor: pointer; } }
+
+/* Con il dito: si scorre e si ingrandisce con due dita; si modifica solo la riga scelta */
+.foglio-scorri { touch-action: pan-x pan-y; }
+.riga.scelta .corpo-riga, .blocco-sez.scelta .sez-nome { background: var(--carta); box-shadow: inset 4px 0 0 var(--accordo), 0 0 0 1px var(--linea); border-radius: 6px; }
+@media (pointer: coarse) {
+  .acc { touch-action: auto; }
+  .riga.scelta .acc { touch-action: none; }
+  .riga:not(.scelta) .acc-riga:hover { background: none; }
+  .testo-riga[contenteditable="false"], .sez-nome[contenteditable="false"] { -webkit-user-select: none; user-select: none; }
+}

@@ -374,6 +374,18 @@
   // ---------------- Il foglio ----------------
   const foglio = $('foglio');
   let chPx = 10;
+  // Con il dito si sceglie prima la riga (un tocco), e solo quella si modifica: così scorrendo non si sposta niente.
+  const tocco = () => matchMedia('(pointer: coarse)').matches;
+  let rigaScelta = null;
+  const modificabile = (id) => !tocco() || id === rigaScelta;
+  function scegliRiga(id) {
+    const vecchia = rigaScelta;
+    rigaScelta = id;
+    if (vecchia && vecchia !== id) rirendiRiga(vecchia);
+    rirendiRiga(id);
+    const x = trova(id);
+    if (x && x.t === 'riga') { rigaCorrente = id; aggiornaCollega(); }
+  }
   function misuraCh() {
     const m = document.createElement('span');
     m.className = 'misura';
@@ -428,16 +440,16 @@
     if (x.t === 'sez') {
       const t = saltiSez.get(x.id);
       const salta = t != null ? `<button type="button" class="sez-salta" data-t="${t}" title="Ascolta da qui">▶ ${fmtTempo(t)}</button>` : '';
-      return `<div class="blocco-sez" data-id="${x.id}">${MANIGLIA('Opzioni del titolo')}<span class="sez-nome" contenteditable="plaintext-only" spellcheck="false" data-campo="sez">${esc(x.testo)}</span>${salta}</div>`;
+      return `<div class="blocco-sez${x.id === rigaScelta ? ' scelta' : ''}" data-id="${x.id}">${MANIGLIA('Opzioni del titolo')}<span class="sez-nome" contenteditable="${modificabile(x.id) ? 'plaintext-only' : 'false'}" spellcheck="false" data-campo="sez">${esc(x.testo)}</span>${salta}</div>`;
     }
     const ind = /^\s*\(/.test(x.testo) ? ' indicazione' : '';
     const note = noteDellaRiga(x.id);
     const mio = vista.mostraMiei && mioDi(x);
     const dots = (note.length || mio) ? `<div class="note-riga">${mio ? `<span class="tag-mio" data-p="${PERSONE.indexOf(io)}" title="In questa riga vedi i tuoi accordi">tuoi</span>` : ''}${note.map((a) => `<button type="button" data-p="${PERSONE.indexOf(a.chi)}" data-nota="${esc(a.id)}" title="Appunto di ${esc(a.chi)}: ${esc(a.testo.slice(0, 60))}"></button>`).join('')}</div>` : '';
-    return `<div class="riga${accVisti(x).length ? '' : ' senza-accordi'}${ind}" data-id="${x.id}">${MANIGLIA('Opzioni della riga')}
+    return `<div class="riga${accVisti(x).length ? '' : ' senza-accordi'}${ind}${x.id === rigaScelta ? ' scelta' : ''}" data-id="${x.id}">${MANIGLIA('Opzioni della riga')}
       <div class="corpo-riga" data-minw="${larghezza(x)}">
         <div class="acc-riga">${accordiHtml(x)}</div>
-        <div class="testo-riga" contenteditable="plaintext-only" spellcheck="false" data-campo="testo">${esc(x.testo)}</div>
+        <div class="testo-riga" contenteditable="${modificabile(x.id) ? 'plaintext-only' : 'false'}" spellcheck="false" data-campo="testo">${esc(x.testo)}</div>
       </div>${dots}</div>`;
   }
   function rendiFoglio() {
@@ -476,6 +488,37 @@
   }
   const elRiga = (id) => foglio.querySelector(`[data-id="${id}"]`);
 
+  // ---- zoom del testo: due dita sul foglio (o pizzico del trackpad). Gli accordi sono in «ch», crescono con il testo ----
+  const scorri = document.querySelector('.foglio-scorri');
+  let pinch = null;
+  const distanza = (ts) => Math.hypot(ts[0].clientX - ts[1].clientX, ts[0].clientY - ts[1].clientY);
+  function grandezza(fs, fine) {
+    fs = Math.max(10, Math.min(34, Math.round(fs)));
+    if (fs !== vista.fs) { vista.fs = fs; foglio.style.setProperty('--fs', fs + 'px'); aggiornaTestoLibero(); }
+    if (fine) { misuraCh(); posizionaPop(); mem.set('archivio.vista', vista); }
+  }
+  scorri.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+      pinch = { d0: distanza(e.touches), fs0: vista.fs };
+      if (drag) { drag.el.classList.remove('trascina'); if (drag.acc) drag.acc[drag.i].c = drag.c0; aggiornaAccordiRiga(drag.x); drag = null; }
+      chiudiPop();
+    }
+  }, { passive: true });
+  scorri.addEventListener('touchmove', (e) => {
+    if (!pinch || e.touches.length !== 2) return;
+    e.preventDefault();
+    grandezza(pinch.fs0 * distanza(e.touches) / pinch.d0);
+  }, { passive: false });
+  const finePinch = (e) => { if (pinch && e.touches.length < 2) { pinch = null; grandezza(vista.fs, true); } };
+  scorri.addEventListener('touchend', finePinch);
+  scorri.addEventListener('touchcancel', finePinch);
+  scorri.addEventListener('wheel', (e) => {
+    if (!e.ctrlKey) return;            // pizzico del trackpad del Mac = rotella con Ctrl
+    e.preventDefault();
+    grandezza(vista.fs * Math.exp(-e.deltaY / 120));
+    clearTimeout(scorri._t); scorri._t = setTimeout(() => grandezza(vista.fs, true), 250);
+  }, { passive: false });
+
   // cursore fantasma: dove andrebbe l'accordo nuovo
   const fantasma = document.createElement('span');
   fantasma.className = 'cursore-acc';
@@ -494,6 +537,7 @@
   foglio.addEventListener('pointerdown', (e) => {
     const a = e.target.closest('.acc');
     if (!a || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    if (pinch || (e.pointerType !== 'mouse' && !modificabile(a.closest('.riga').dataset.id))) return;  // si scorre, non si sposta
     e.preventDefault();
     const x = trova(a.closest('.riga').dataset.id);
     if (vistaCambiata()) { avvisaVista(); return; }
@@ -546,6 +590,8 @@
     if (dot) { evidenziaAppunto(dot.dataset.nota); return; }
     const man = e.target.closest('.maniglia');
     if (man) { apriMenu(man); return; }
+    const voce = e.target.closest('.riga, .blocco-sez');
+    if (voce && !modificabile(voce.dataset.id)) { scegliRiga(voce.dataset.id); return; }
     if (e.target.closest('.acc')) return;
     const r = e.target.closest('.acc-riga');
     if (!r) return;
@@ -761,6 +807,7 @@
   }
   const selezioneVuota = () => { const s = getSelection(); return !s.rangeCount || s.getRangeAt(0).collapsed; };
   function metti(id, pos, campo = 'testo') {
+    if (tocco() && rigaScelta !== id) { const v = rigaScelta; rigaScelta = id; if (v && elRiga(v)) rirendiRiga(v); rirendiRiga(id); }
     const el = elRiga(id);
     if (!el) return;
     const t = el.querySelector(`[data-campo="${campo}"]`);
@@ -1165,6 +1212,7 @@
   $('annulla').addEventListener('click', annulla);
   $('rifai').addEventListener('click', rifai);
   document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && rigaScelta && !pop && !menu) { const v = rigaScelta; rigaScelta = null; rirendiRiga(v); return; }
     if (!(e.metaKey || e.ctrlKey)) return;
     const k = e.key.toLowerCase();
     const campoProprio = e.target.closest && e.target.closest('#appunto-testo, #cerca, #testo-libero, .pop input, #campo-codice');
@@ -1511,6 +1559,7 @@
 
   // ---------------- Avvio ----------------
   if (window.innerWidth >= 760 || vistaCambiata()) $('vista-box').open = true;
+  if (tocco()) $('aiuto-foglio').innerHTML = '<b>Tocca una riga</b> per sceglierla: si modifica solo quella, così scorrendo non sposti niente. Poi tocca sopra una parola per mettere un accordo, tocca un accordo per cambiarlo o <b>trascinalo</b>, tocca il testo per scrivere. <b>Due dita</b> per ingrandire.';
   rendiChi();
   if (LOCALE) {
     const D = window.ARCHIVIO_PROVA;
