@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Archivio · App Antifragile</title>
+<meta name="description" content="App Antifragile: l'archivio dei brani della band, con testo, accordi e appunti.">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Studio Antifragile">
+<meta property="og:title" content="App Antifragile · Archivio">
+<meta property="og:description" content="I nostri brani: testo e accordi da sistemare insieme, appunti e registrazioni.">
+<meta property="og:image" content="https://astragiardini-ui.github.io/band-calendario/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://*.supabase.co; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; media-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="theme-color" content="#E4EAE6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161B1A" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="archivio.css?v=310158cb92">
+</head>
+<body>
+<header class="barra">
+  <nav class="sezioni" aria-label="Sezioni dell'app">
+    <a href="./">Calendario</a>
+    <a href="archivio.html" aria-current="page">Archivio</a>
+  </nav>
+  <div class="chi-box">
+    <span class="chi-label" id="chi-label">Chi sei?</span>
+    <div class="chi" id="chi" role="radiogroup" aria-labelledby="chi-label"></div>
+  </div>
+</header>
+<p id="avviso-chi" class="avviso-chi" hidden>Scegli il tuo nome qui sopra: così appunti e modifiche portano il tuo nome.</p>
+
+<div class="app">
+  <aside class="elenco" aria-label="Brani">
+    <p class="elenco-titolo">I nostri brani</p>
+    <label class="cerca">
+      <span class="visually-hidden">Cerca un brano</span>
+      <input id="cerca" type="search" placeholder="Cerca un brano" autocomplete="off">
+    </label>
+    <ul id="brani" class="brani"></ul>
+    <p class="elenco-titolo" id="drive-titolo" hidden>Nel Drive, da portare qui</p>
+    <ul id="drive" class="brani brani-drive" hidden></ul>
+  </aside>
+
+  <main class="brano" id="brano">
+    <div class="brano-testa">
+      <div>
+        <h1 id="titolo">Archivio</h1>
+        <p class="brano-info"><span id="autore"></span> · <span id="salvato" class="salvato" aria-live="polite"></span></p>
+      </div>
+      <div class="strumenti" role="toolbar" aria-label="Strumenti del foglio">
+        <div class="seg" role="group" aria-label="Modo">
+          <button type="button" id="modo-foglio" class="seg-btn" aria-pressed="true">Foglio</button>
+          <button type="button" id="modo-testo" class="seg-btn" aria-pressed="false">Testo libero</button>
+        </div>
+        <button type="button" id="annulla" class="btn" title="Annulla (Cmd+Z)">Annulla</button>
+        <button type="button" id="rifai" class="btn" title="Rifai (Cmd+Maiusc+Z)">Rifai</button>
+        <button type="button" id="versioni-btn" class="btn">Versioni</button>
+        <button type="button" id="copia" class="btn">Copia testo</button>
+      </div>
+    </div>
+
+    <div id="modo-acc-box" class="modo-acc">
+      <span class="vista-et">Gli accordi che cambi valgono</span>
+      <div class="seg" role="group" aria-label="Per chi valgono gli accordi che cambi">
+        <button type="button" class="seg-btn" data-modo-acc="tutti" aria-pressed="true">per tutti</button>
+        <button type="button" class="seg-btn" data-modo-acc="mio" id="modo-mio" aria-pressed="false">solo per me</button>
+      </div>
+      <span id="spiega-modo" class="spiega-modo"></span>
+      <span id="miei-box" class="miei-box" hidden><span id="miei-conta"></span> <button type="button" id="miei-mostra" class="btn piccolo"></button></span>
+    </div>
+
+    <details class="vista-box" id="vista-box">
+    <summary>Tonalità, nomi degli accordi, grandezza del testo</summary>
+    <div class="vista" role="group" aria-label="Come si vedono gli accordi">
+      <span class="vista-et">Accordi</span>
+      <div class="seg" role="group" aria-label="Nomi degli accordi">
+        <button type="button" class="seg-btn" data-sistema="orig" aria-pressed="true">Come scritti</button>
+        <button type="button" class="seg-btn" data-sistema="ita" aria-pressed="false">DO RE MI</button>
+        <button type="button" class="seg-btn" data-sistema="eng" aria-pressed="false">C D E</button>
+      </div>
+      <span class="vista-et">Tonalità</span>
+      <div class="passo">
+        <button type="button" id="tono-giu" class="btn piccolo" aria-label="Mezzo tono sotto">−</button>
+        <output id="tono" aria-live="polite">0</output>
+        <button type="button" id="tono-su" class="btn piccolo" aria-label="Mezzo tono sopra">+</button>
+      </div>
+      <span class="vista-et">Testo</span>
+      <div class="passo">
+        <button type="button" id="font-giu" class="btn piccolo" aria-label="Testo più piccolo">A−</button>
+        <button type="button" id="font-su" class="btn piccolo" aria-label="Testo più grande">A+</button>
+      </div>
+    </div>
+    </details>
+
+    <div id="avviso-vista" class="avviso" hidden>
+      <span id="avviso-vista-testo"></span>
+      <button type="button" id="vista-reset" class="btn piccolo">Torna come scritti</button>
+      <button type="button" id="vista-applica" class="btn piccolo">Salva in questa tonalità</button>
+    </div>
+
+    <p class="aiuto" id="aiuto-foglio">Tocca <b>sopra una parola</b> per mettere un accordo · tocca un accordo per cambiarlo o toglierlo · <b>trascinalo</b> per spostarlo · scrivi direttamente nel testo, Invio fa una riga nuova.</p>
+
+    <p id="stato-rete" class="stato-rete" role="status"></p>
+    <div class="foglio-scorri">
+      <div id="foglio" class="foglio" aria-label="Testo e accordi"></div>
+      <button type="button" id="riga-fondo" class="aggiungi-fondo">+ riga in fondo</button>
+    </div>
+    <textarea id="testo-libero" class="testo-libero" spellcheck="false" wrap="off" hidden
+      aria-label="Testo libero: accordi sulla riga sopra le parole"></textarea>
+  </main>
+
+  <aside class="lato">
+    <section class="pannello" id="ascolta-sez" aria-labelledby="ascolta-t">
+      <h2 id="ascolta-t">Ascolta</h2>
+      <ul id="registrazioni" class="registrazioni"></ul>
+      <audio id="audio" controls preload="metadata" hidden></audio>
+      <div id="segnaposti" class="segnaposti" hidden></div>
+      <details class="trascr" id="trascr">
+        <summary>Cosa si sente cantato<span id="trascr-di"></span> <span class="muto">(trascrizione automatica, approssimativa)</span></summary>
+        <ol id="trascrizione" class="trascrizione"></ol>
+      </details>
+    </section>
+
+    <section class="pannello" aria-labelledby="appunti-t">
+      <h2 id="appunti-t">Appunti</h2>
+      <form id="nuovo-appunto" class="nuovo-appunto">
+        <label class="visually-hidden" for="appunto-testo">Scrivi un appunto</label>
+        <textarea id="appunto-testo" rows="2" placeholder="Scrivi un appunto…"></textarea>
+        <div class="collega">
+          <button type="button" id="col-riga" class="chip-col" aria-pressed="false" hidden></button>
+          <button type="button" id="col-tempo" class="chip-col" aria-pressed="false" hidden></button>
+        </div>
+        <button type="submit" class="btn pieno">Aggiungi appunto</button>
+      </form>
+      <div class="seg filtro" role="group" aria-label="Quali appunti">
+        <button type="button" class="seg-btn" data-filtro="aperti" aria-pressed="true">Da fare</button>
+        <button type="button" class="seg-btn" data-filtro="tutti" aria-pressed="false">Tutti</button>
+      </div>
+      <ul id="appunti" class="appunti"></ul>
+    </section>
+    <details class="info-privacy">
+      <summary>Info e privacy</summary>
+      <p>Qui si salvano il testo e gli accordi dei brani, le loro versioni, gli appunti con il nome di chi li scrive e gli accordi personali di ognuno. Li vede solo chi ha il link della band. Sul telefono restano il tuo nome e il codice del link: è memoria tecnica del browser, senza cookie e senza tracciamenti.</p>
+      <p>I dati stanno su Supabase, in un server a Francoforte (UE). Le registrazioni non sono qui: restano nel vostro Drive. Niente analytics, niente pubblicità, niente caratteri o script da altri siti.</p>
+    </details>
+  </aside>
+</div>
+
+<div id="toast" class="toast" role="status" hidden></div>
+
+<dialog id="versioni" class="dialogo" aria-labelledby="versioni-t">
+  <div class="dialogo-testa">
+    <h2 id="versioni-t">Versioni</h2>
+    <button type="button" class="btn" id="versioni-chiudi">Chiudi</button>
+  </div>
+  <p class="muto">Ogni volta che qualcuno scrive, la versione di prima resta qui. Tornare indietro non cancella niente.</p>
+  <div class="versioni-corpo">
+    <ul id="versioni-elenco" class="versioni-elenco"></ul>
+    <pre id="versioni-anteprima" class="versioni-anteprima" aria-label="Anteprima della versione"></pre>
+  </div>
+</dialog>
+
+<dialog id="dlg-codice" class="dialogo dialogo-piccolo" aria-labelledby="dlg-codice-t">
+  <form id="form-codice">
+    <h2 id="dlg-codice-t">Serve il link della band</h2>
+    <p>Apri il link che è nel gruppo, oppure incolla qui il codice (o tutto il link).</p>
+    <label for="campo-codice">Codice</label>
+    <input id="campo-codice" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false">
+    <p id="err-codice" class="errore" role="alert" hidden></p>
+    <div class="pop-fila"><button type="submit" class="btn pieno">Entra</button></div>
+  </form>
+</dialog>
+
+<script src="config.js?v=310158cb92"></script>
+<script src="archivio.js?v=310158cb92"></script>
+</body>
+</html>
